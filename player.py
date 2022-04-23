@@ -26,4 +26,4 @@ reader = SimpleMFRC522()
 
 test_id = 703790094799
 track = id_to_track[test_id]
-#sp.start_playback(uris = [track])
+sp.start_playback(uris = [track])
