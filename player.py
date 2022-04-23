@@ -24,7 +24,8 @@ sp = spotipy.Spotify(
 
 reader = SimpleMFRC522()
 
-
+#TODO: Make song not start from the beginning each time it reads a tag
+#TODO: Specify Device ID/think about what happens if no device is active
 while True:
     try:
         print("waiting for rfid")
