@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+'''Use this script to get the ID of your RFID tags'''
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 
