@@ -9,7 +9,8 @@ import os
 CLIENT_ID = os.getenv("VINYL_CLIENT_ID")
 CLIENT_SECRET = os.getenv("VINYL_CLIENT_SECRET")
 
-id_to_track = {703790094799:'spotify:track:043dDJ9u0PQ3ooAXMgcwOe'} 
+id_to_track = {703790094799:'spotify:track:043dDJ9u0PQ3ooAXMgcwOe',
+               565828783159:'spotify:track:0gplL1WMoJ6iYaPgMCL0gX'} 
 
 
 
@@ -24,6 +25,15 @@ sp = spotipy.Spotify(
 reader = SimpleMFRC522()
 
 
-test_id = 703790094799
-track = id_to_track[test_id]
-sp.start_playback(uris = [track])
+while True:
+    try:
+        print("waiting for rfid")
+        id = reader.read_id()
+        print(f"read if as: {id}")
+
+        if id in id_to_track:
+            print("track exists")
+            track = id_to_track[id]
+            sp.start_playback(uris = [track])
+    finally:
+        GPIO.cleanup()
