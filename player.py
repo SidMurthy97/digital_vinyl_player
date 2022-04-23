@@ -2,8 +2,10 @@
 
 #TODO: Make song not start from the beginning each time it reads a tag
 #TODO: Specify Device ID/think about what happens if no device is active
+    #This isnt possible. I will have to make the rpi an active device...
 #TODO: Add logger
 
+from pickle import TRUE
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import spotipy
@@ -29,16 +31,26 @@ sp = spotipy.Spotify(
 
 reader = SimpleMFRC522()
 
-
+prev_id = None
 while True:
     try:
         print("waiting for rfid")
         id = reader.read_id()
         print(f"read if as: {id}")
 
-        if id in id_to_track:
+        '''Play a track if its a recognised ID, but not if its the immediately
+        previous ID. This is to block a song restarting if a tag has been 
+        left on the player. This should get cleared at some point'''
+        if id in id_to_track and id != prev_id:
             print("track exists")
+            prev_id = id
             track = id_to_track[id]
             sp.start_playback(device_id=DEVICE_ID,uris = [track])
+
+    #print the error if it occurs
+    except Exception as e:
+        print(e)
+    
+    
     finally:
         GPIO.cleanup()
