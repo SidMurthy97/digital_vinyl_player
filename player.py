@@ -13,12 +13,11 @@ CLIENT_ID = os.getenv("VINYL_CLIENT_ID")
 CLIENT_SECRET = os.getenv("VINYL_CLIENT_SECRET")
 DEVICE_ID = os.getenv("VINY_DEVICE_ID")
 
-id_to_track = {703790094799:'spotify:track:043dDJ9u0PQ3ooAXMgcwOe',
-               565828783159:'spotify:track:0gplL1WMoJ6iYaPgMCL0gX'} 
+id_to_track = {703790094799:['spotify:track:043dDJ9u0PQ3ooAXMgcwOe',None],
+               565828783159:['spotify:track:0gplL1WMoJ6iYaPgMCL0gX', "easy on me"]} 
 
 
-
-
+#setup spotify
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(
         client_id=CLIENT_ID,
@@ -26,12 +25,19 @@ sp = spotipy.Spotify(
         redirect_uri="http://google.com/",
         scope="user-read-playback-state,user-modify-playback-state"))
 
+#setup reader
 reader = SimpleMFRC522()
+
+#setup logger 
+logging.basicConfig(filename='test.log', level=logging.DEBUG,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 prev_id = None
 while True:
     try:
-        print("waiting for rfid")
+        wait_msg = "waiting for rfid"
+        print(wait_msg)
+        logging.info(wait_msg)
         id = reader.read_id()
         print(f"read if as: {id}")
 
@@ -39,15 +45,17 @@ while True:
         previous ID. This is to block a song restarting if a tag has been 
         left on the player. This should get cleared at some point'''
         if id in id_to_track and id != prev_id:
-            print("track exists")
+            # logging.info(f"playing {id_to_track[id][1]}")
             prev_id = id
-            track = id_to_track[id]
+            track = id_to_track[id][0]
             sp.start_playback(device_id=DEVICE_ID,uris = [track])
 
     #print the error if it occurs
     except Exception as e:
-        print(e)
-    
-    
-    finally:
-        GPIO.cleanup()
+        print("error is: ", e)
+        
+
+    except KeyboardInterrupt:
+        break
+
+GPIO.cleanup()
