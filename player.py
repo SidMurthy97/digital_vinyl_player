@@ -1,16 +1,13 @@
-'''Execute this script to run the player'''
-
-#TODO: Make song not start from the beginning each time it reads a tag
 #TODO: Specify Device ID/think about what happens if no device is active
     #This isnt possible. I will have to make the rpi an active device...
 #TODO: Add logger
 
-from pickle import TRUE
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import logging
 
 CLIENT_ID = os.getenv("VINYL_CLIENT_ID")
 CLIENT_SECRET = os.getenv("VINYL_CLIENT_SECRET")
